@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import {
   createItem,
   filterItems,
@@ -12,13 +12,15 @@ import MarkAllAsUnpacked from './mark-all-as-unpacked';
 import NewItem from './new-item';
 
 const Application = () => {
-  const [items, setItems] = useState(getInitialItems());
-  const [newItemName, setNewItemName] = useState('');
+  const [items, setItems] = useState(getInitialItems);
 
-  const add = (name) => {
-    const item = createItem(name);
-    setItems([...items, item]);
-  };
+  const add = useCallback(
+    (name) => {
+      const item = createItem(name);
+      setItems([...items, item]);
+    },
+    [items],
+  );
 
   const update = (id, updates) => {
     setItems(updateItem(items, id, updates));
@@ -38,11 +40,7 @@ const Application = () => {
   return (
     <main className="flex flex-col gap-8 p-8 mx-auto lg:max-w-4xl">
       <Header items={items} />
-      <NewItem
-        newItemName={newItemName}
-        setNewItemName={setNewItemName}
-        addItem={add}
-      />
+      <NewItem addItem={add} />
       <section className="flex flex-col gap-8 md:flex-row">
         <ItemList
           title="Unpacked Items"
